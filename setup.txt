@@ -1,0 +1,47 @@
+Instructions for setting up the webserver on a Raspberry Pi 3. While this projects involves the ECE331 expansion board (something I doubt anyone will have), the information for setting up a lighttpd server on a Raspberry Pi is still pretty useful.
+
+___________________________________________________________________________
+# Setting up Lighttpd
+
+$ sudo apt install lighttpd
+    $ sudo apt install elinks
+    $ cd /var/www
+    $ sudo chown pi html
+    $ sudo lighttpd-enable-mod cgi
+    $ sudo lighttpd-enable-mod fastcgi
+    $ sudo lighttpd-eanlbel-mod fastcgi-php
+
+    NOTE: Had to do these configureations to get fastcgi-php to work
+
+    $ cp /etc/lighttpd/conf-available/15-fastcgi-php.conf /home/pi/ECE331/Homework7/15-fastcgi-php.conf
+    $ sudo vim /etc/lighttpd/conf-availabe/fastcgi-php.conf
+
+___________________________________________________________________________
+    # -*- depends: fastcgi -*-
+    # /usr/share/doc/lighttpd/fastcgi.txt.gz
+    # http://redmine.lighttpd.net/projects/lighttpd/wiki/Docs:ConfigurationOptions#mod_fastcgi-fastcgi
+
+    ## Start an FastCGI server for php (needs the php5-cgi package)
+    fastcgi.server += ( ".php" =>
+            ((
+                    "socket" => "/var/run/php/php7.3-fpm.sock",
+                    "broken-scriptfilename" => "enable"
+            ))
+    )
+___________________________________________________________________________
+    $ sudo service lighttpd force-reload
+
+___________________________________________________________________________
+# Setting up sqlite 3
+
+$ sudo apt install sqlite3
+___________________________________________________________________________
+# Setting up php
+
+NOTE: Installing php installs apache stuff, which is pretty annoying when your trying to run a lighttpd server. Skip removing apache2 if thats what your using for your webserver.
+
+$ sudo apt install php
+$ sudo apt remove apache2
+$ sudo apt install php7.3-fpm
+$ sudo apt install php-sqlite3
+
