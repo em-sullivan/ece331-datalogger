@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8"name="viewport" content="width=device-width, initial-scale=1">
+    <META http-equiv="refresh" content="300">
+    <script type="text/javascript" src="moment-with-locales.js"></script>
+    <script type="text/javascript" src="Chart.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="jquery.mobile.min.css" />
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.mobile.min.js"></script>
+    <script type="text/javascript" src="tplot.js"></script>
+    <style>
+        .canv {
+	        background-color: black;
+        }
+
+        h1 {text-align: center;}
+    </style>
+    </head>
+    <body bgcolor="black">
+        <h1 style="color: blue"> Eric's Data Logger! </h1>
+        <p style = "color: pink"> Current Date/Time: <span id = "datetime"></span></p>
+        <script>
+        // Script that displays the current time the websierve was accesed at
+        var dt = new Date();
+        document.getElementById("datetime").innerHTML = dt.toLocaleString();
+        </script>
+        <div data-role="page" id="page1">
+            <div role="main" class="ui-content">
+                <div id="charta">
+                    <canvas id="canvas1" class="canv" width="750" height="500"></canvas>
+                    <canvas id="canvas2" class="canv" width="750" height="500"></canvas>
+                    <canvas id="canvas3" class="canv" width="750" height="500"></canvas>
+                    <canvas id="canvas4" class="canv" width="750" height="500"></canvas>
+                    <canvas id="canvas5" class="canv" width="750" height="500"></canvas>
+                    <canvas id="canvas6" class="canv" width="750" height="500"></canvas>
+                    <canvas id="canvas7" class="canv" width="750" height="500"></canvas>
+                    <canvas id="canvas8" class="canv" width="750" height="500"></canvas>
+                </div>
+            </div>
+        </div>
+        <script>
+        // Colors for graphs
+        var blue = "rgba(0, 0, 255, 255)";
+        var red = "rgba(255, 0, 0, 255)";
+        var green = "rgba(0, 255, 0, 255)";
+        var orange = "rgba(255, 128, 0, 255)";
+        var pink = "rgba(255, 102, 255, 255)";
+        var yellow = "rgba(255, 255, 102, 255)";
+        var purple = "rgba(127, 0, 255, 255)";
+        var cyan = "rgba(102, 255, 255, 255)";
+
+        // Gets json data from php script and makes a graph for each set of data
+        var jsondata= $.ajax({url:'sqldata.php', dataType: 'json', }).done(function (results) {
+            plot(results, 'canvas1',"data1", "Temperature (1)", "Degrees (Celsius)", blue);
+            plot(results, 'canvas2',"data2", "IR Intensity", "Raw Value", red); 
+            plot(results, 'canvas3', "data3", "Full Spectrum Intensity", "Raw Value", green);
+            plot(results, 'canvas4', "data4", "Visible Light Intensity", "Raw Value", pink);
+            plot(results, 'canvas5', "data5", "Illuminance", "Lux", purple);
+            plot(results, 'canvas6', "data6", "Temperature (2)", "Degrees (Celsius)", cyan);
+            plot(results, 'canvas7', "data7", "Pressure", "Millibars", yellow);
+            plot(results, 'canvas8', "data8", "Humidity", "Millipercent", orange);
+
+	    } );
+
+        </script>
+
+    </body>
+</html>

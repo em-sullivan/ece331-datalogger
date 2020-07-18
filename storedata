@@ -1,0 +1,53 @@
+#!/usr/bin/python
+'''
+Eric Sullivan
+04/17/2020
+Python script that takes current date and
+sensor data from S18 expansion board, and stores
+it into a sqlite3 data base.
+'''
+
+import sqlite3
+import serial
+import re
+from datetime import datetime
+
+# Gets current date and time
+date = datetime.now().strftime('20%y-%m-%d')
+time = datetime.now().strftime('%H:%M')
+
+try:
+    # Connects to sql data base
+    s = sqlite3.connect("datalog.db")
+    c = s.cursor()
+
+    # Connects to serial port
+    ser = serial.Serial('/dev/ttyAMA0', 19200)
+
+    # Gets sensor data
+    ser.write(b'Give me data')
+    data = ser.readline()
+
+    # Seperates sensor data
+    data = re.sub('[|\n\r]', '', data)
+    data = re.sub('  ', ' ', data)
+    sepdata = data.split(' ')
+
+    # Appends date/time
+    sepdata.insert(0, date)
+    sepdata.insert(1,time)
+
+    # Converts values
+    sepdata[7] = float(sepdata[7]) / 100.0;
+    sepdata[8] = float(sepdata[8]) / 10000.0;
+    sepdata[9] = float(sepdata[9]) / 1000.0;
+
+    # Writes data to data base
+    c.execute("insert into data values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sepdata)
+    s.commit()
+    
+    # Clean up
+    s.close()
+    ser.close()
+except:
+    print "Error Occured while loading data!"
